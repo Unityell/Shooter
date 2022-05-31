@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-public class S_Logs : MonoBehaviour
+class S_Logs : MonoBehaviour
 {
     public static string Logs;
     public static int Number;

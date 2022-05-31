@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class S_Enemy : MonoBehaviour
@@ -12,18 +10,19 @@ public class S_Enemy : MonoBehaviour
     bool IsGround;
     bool MoveDirection;
 
+    public void Die(GameObject Obj)
+    {
+        if(Obj.CompareTag("Bullet"))
+        {
+            S_Logs.SaveLogs("Попадание");
+            Destroy(gameObject);
+        }
+    }
     void OnTriggerEnter(Collider Other)
     {   
         if(Other.CompareTag("Ground"))
         {
             MoveDirection = !MoveDirection;
-        }
-        
-        if(Other.CompareTag("Bullet"))
-        {
-            S_Logs.SaveLogs("Попадание");
-            Destroy(Other.gameObject);
-            Destroy(gameObject);
         }
     }
 

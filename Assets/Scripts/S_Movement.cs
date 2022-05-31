@@ -1,17 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class S_Movement : MonoBehaviour
 {
-    [SerializeField] CharacterController Controller;
-    [SerializeField] float Speed;
+    public CharacterController Controller;
+    [SerializeField] float MoveSpeed;
     [SerializeField] float Gravity;
-    [SerializeField] Vector3 Velocity;
-    [SerializeField] Transform GroundCheck;
-    [SerializeField] float GroundDistance;
+    [SerializeField] float JumpPower;
+    Vector3 Velocity;
+    [SerializeField] Transform GroundCheckPoint;
+    [SerializeField] float GroundCheckDistance;
     [SerializeField] LayerMask Ground;
-    bool IsGrounded;
     bool Push;
     float Timer = 0.25f;
 
@@ -20,26 +18,8 @@ public class S_Movement : MonoBehaviour
         Push = true;
     }
 
-    void FixedUpdate()
+    void Move()
     {
-        if(Push)
-        {
-            Timer -= Time.deltaTime;
-            Controller.Move(-transform.forward * Speed * 2 * Time.deltaTime);
-            if(Timer <= 0)
-            {
-                Push = false;
-                Timer = 0.25f;
-            }
-        }
-
-        IsGrounded = Physics.CheckSphere(GroundCheck.position, GroundDistance, Ground);
-
-        if(IsGrounded && Velocity.y < 0)
-        {
-            Velocity.y = -2f;
-        }
-
         float PosX = Input.GetAxisRaw("Horizontal");
         float PosZ = Input.GetAxisRaw("Vertical");
 
@@ -50,10 +30,50 @@ public class S_Movement : MonoBehaviour
             Move = Vector3.zero;
         }
 
-        Controller.Move(Move * Speed * Time.deltaTime);
+        Controller.Move(Move * MoveSpeed * Time.deltaTime);
+    }
 
+    bool DetectGround()
+    {
+        return Physics.CheckSphere(GroundCheckPoint.position, GroundCheckDistance, Ground);
+    }
+    void CastGravity()
+    {
         Velocity.y += Gravity * Time.deltaTime;
-
         Controller.Move(Velocity * Time.deltaTime);
+    }
+    void Jump()
+    {
+        Velocity.y = JumpPower;
+    }
+
+    void Update()
+    {
+        if(Push)
+        {
+            Timer -= Time.deltaTime;
+            Controller.Move(-transform.forward * MoveSpeed * 2 * Time.deltaTime);
+            if(Timer <= 0)
+            {
+                Push = false;
+                Timer = 0.25f;
+            }
+        }
+
+        if(DetectGround() && Velocity.y < 0)
+        {
+            Velocity.y = -2f;
+        }
+
+        Move();
+        CastGravity();
+
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            if(DetectGround())
+            {
+                Jump();
+            }
+        }
     }
 }

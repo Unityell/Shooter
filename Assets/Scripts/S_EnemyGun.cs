@@ -1,10 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class S_EnemyGun : S_Gun
 {
-    [SerializeField] GameObject Master;
     [SerializeField] LayerMask Ground;
     [SerializeField] float AttackTimer;
     float ShadowAttackTimer;
@@ -23,12 +20,9 @@ public class S_EnemyGun : S_Gun
     {
         if(Player != null)
         {
-            if (Physics.Linecast(transform.position, Player.transform.position, Ground))
+            if (!Physics.Linecast(transform.position, Player.transform.position, Ground))
             {
-
-            }
-            else
-            {
+                transform.LookAt(Player.transform.position);
                 ShadowAttackTimer -= Time.deltaTime;
                 if(ShadowAttackTimer <= 0)
                 {
